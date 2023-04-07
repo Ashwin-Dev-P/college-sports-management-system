@@ -1,17 +1,19 @@
 ﻿
+using System.Reflection.PortableExecutable;
+
 namespace Microsoft.Data.SqlClient
 {
     internal class Program
     {
 
         static string CONN_STRING = "Data Source=5CG9400GXC;Initial Catalog=CollegeSportManagementSystem;Integrated Security=True;Encrypt=False;";
-        
-        public static void DisplaySports(SqlCommand cmd)
+
+        public static void Display(string TableName, SqlCommand cmd)
         {
-            cmd.CommandText = "select * from Sports";
+            cmd.CommandText = $"select * from {TableName}";
             SqlDataReader reader = cmd.ExecuteReader();
 
-            Console.WriteLine("\nSPORTS");
+            Console.WriteLine($"\n{TableName}");
             Console.WriteLine("====================");
             Console.WriteLine("id  name");
             Console.WriteLine("====================");
@@ -25,24 +27,30 @@ namespace Microsoft.Data.SqlClient
             Console.WriteLine("====================\n");
         }
 
-        public static void DisplayPlayers(SqlCommand cmd)
+        public static void DisplaySportsInTournament(int tournamentId, SqlCommand cmd)
         {
-            cmd.CommandText = "select * from Player";
+            // Query to get all the sports present in the tournament.
+            cmd.CommandText = $"SELECT id,name FROM Sports where ( id in ( select sportId from TournamentSportCombination where(tournamentId = '{tournamentId}') )  )";
             SqlDataReader reader = cmd.ExecuteReader();
+            
 
-            Console.WriteLine("\nPLAYERS");
-            Console.WriteLine("====================");
-            Console.WriteLine("id  name");
-            Console.WriteLine("====================");
 
+            // Print the sports present in the tournament after all the sports are done adding.
+            Console.WriteLine($"\nThe sports in the tournament are:");
+            Console.WriteLine("-----------------------------------------------------------");
             while (reader.Read())
             {
                 Console.WriteLine($"{reader.GetInt32(0)} {reader.GetString(1)}");
-
             }
+            Console.WriteLine("-----------------------------------------------------------\n");
+
             reader.Close();
-            Console.WriteLine("====================\n");
         }
+
+
+
+
+
 
         public static void AddSports(string sportName, SqlCommand cmd)
         {
@@ -97,27 +105,13 @@ namespace Microsoft.Data.SqlClient
 
                 if (option == 2)
                 {
-                    // Query to get all the sports present in the tournament.
-                    cmd.CommandText = $"SELECT name FROM Sports where ( id in ( select sportId from TournamentSportCombination where(tournamentId = '{tournamentId}') )  )";
-                    reader = cmd.ExecuteReader();
-
-
-                    // Print the sports present in the tournament after all the sports are done adding.
-                    Console.WriteLine($"\nThe sports in the tournament {tournamentName} are:");
-                    Console.WriteLine("-----------------------------------------------------------");
-                    while (reader.Read())
-                    {
-                        Console.WriteLine($"# {reader.GetString(0)}");
-                    }
-                    Console.WriteLine("-----------------------------------------------------------\n");
-                    
-                    reader.Close();
+                    DisplaySportsInTournament(tournamentId,cmd);
 
                     break;
                 }
                 else if(option == 1)
                 {
-                    DisplaySports(cmd);
+                    Display("Sports",cmd);
 
                     // Get sport id as input.
                     Console.WriteLine("\nSelect the sport id:");
@@ -205,22 +199,24 @@ namespace Microsoft.Data.SqlClient
                 }
                 else if (option == 3)
                 {
+                    Display("Tournament", cmd);
                     Console.WriteLine("Enter the tournament id:");
                     int tournamentId = Convert.ToInt32(Console.ReadLine());
                     RemoveTournament(tournamentId, cmd);
                 }
                 else if(option == 4)
                 {
-                    DisplaySports(cmd);
+                    Display("Sports",cmd);
 
                     Console.WriteLine("\nEnter the sport id:");
                     int sportId = Convert.ToInt32(Console.ReadLine());
                     RemoveSports(sportId, cmd);
 
-                    DisplaySports(cmd);
-                }else if (option == 5)
+                    Display("Sports", cmd);
+                }
+                else if (option == 5)
                 {
-                    DisplayPlayers(cmd);
+                    Display("Player",cmd);
 
                     Console.WriteLine("Enter the player id:");
                     int playerId = Convert.ToInt32(Console.ReadLine());
@@ -229,13 +225,16 @@ namespace Microsoft.Data.SqlClient
                 }
                 else if (option == 6)
                 {
+                    Display("Tournament", cmd);
                     Console.WriteLine("Enter the tournament id:");
                     int tournamentId = Convert.ToInt32(Console.ReadLine());
 
+                    DisplaySportsInTournament(tournamentId, cmd);
                     Console.WriteLine("Enter the sport id:");
                     int sportId = Convert.ToInt32(Console.ReadLine());
 
-                    Console.WriteLine("Enter the player id:");
+                    Display("Player", cmd);
+                    Console.WriteLine("Enter the player id of the winner:");
                     int playerId = Convert.ToInt32(Console.ReadLine());
 
                     AddScoreBoard(tournamentId, sportId, playerId, cmd);
@@ -259,10 +258,12 @@ namespace Microsoft.Data.SqlClient
                 }
                 else
                 {
-                    conn.Close();
+                    
                     break;
                 }
             }
+
+            conn.Close();
         }
     }
 }
