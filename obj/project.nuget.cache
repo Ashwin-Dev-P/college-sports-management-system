@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "NkUbf7yC9TscmmHihHWPbKRSxtNoLXix3W7uOHDYBIXKBHy0WX0QcIMR718hzAi1rzO1V1HzE+k6/JSzUI2IQQ==",
+  "dgSpecHash": "UNSoLjLlIYBfwXYG7tqXaqaNBrr2ozDmXMQ4GgsBTdPV4NnJF5nybW6BqdcoZlm8tW1yIhQaF+TmBc9OAuHJLA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\HP\\source\\repos\\CollegeSportManagementSystem\\CollegeSportManagementSystem.csproj",
+  "projectFilePath": "C:\\Users\\HP\\source\\repos\\assessments\\assessment 3\\CollegeSportManagementSystem\\CollegeSportManagementSystem.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HP\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

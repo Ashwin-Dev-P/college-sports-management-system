@@ -2009,11 +2009,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HP\\source\\repos\\CollegeSportManagementSystem\\CollegeSportManagementSystem.csproj",
+      "projectUniqueName": "C:\\Users\\HP\\source\\repos\\assessments\\assessment 3\\CollegeSportManagementSystem\\CollegeSportManagementSystem.csproj",
       "projectName": "CollegeSportManagementSystem",
-      "projectPath": "C:\\Users\\HP\\source\\repos\\CollegeSportManagementSystem\\CollegeSportManagementSystem.csproj",
+      "projectPath": "C:\\Users\\HP\\source\\repos\\assessments\\assessment 3\\CollegeSportManagementSystem\\CollegeSportManagementSystem.csproj",
       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\HP\\source\\repos\\CollegeSportManagementSystem\\obj\\",
+      "outputPath": "C:\\Users\\HP\\source\\repos\\assessments\\assessment 3\\CollegeSportManagementSystem\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

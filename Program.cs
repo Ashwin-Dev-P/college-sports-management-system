@@ -4,11 +4,32 @@ namespace Microsoft.Data.SqlClient
     internal class Program
     {
 
+        static string CONN_STRING = "Data Source=5CG9400GXC;Initial Catalog=CollegeSportManagementSystem;Integrated Security=True;Encrypt=False;";
+        
+        public static void DisplaySports(SqlCommand cmd)
+        {
+            cmd.CommandText = "select * from Sports";
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            Console.WriteLine("\nSPORTS");
+            Console.WriteLine("====================");
+            Console.WriteLine("id  name");
+            Console.WriteLine("====================");
+
+            while (reader.Read())
+            {
+                Console.WriteLine($"{reader.GetInt32(0)} {reader.GetString(1)}");
+
+            }
+            reader.Close();
+            Console.WriteLine("====================");
+        }
 
         public static void AddSports(string sportName, SqlCommand cmd)
         {
 
             cmd.CommandText = $"insert into Sports(name) values('{sportName}')";
+
             cmd.ExecuteNonQuery();
             Console.WriteLine("\n" + sportName + " added\n");
         }
@@ -28,12 +49,69 @@ namespace Microsoft.Data.SqlClient
             cmd.ExecuteNonQuery();
         }
 
+
+
         public static void AddTournament(string tournamentName, SqlCommand cmd)
         {
+            
 
             cmd.CommandText = $"insert into Tournament(name) values('{tournamentName}')";
             cmd.ExecuteNonQuery();
-            Console.WriteLine("\n" + tournamentName + " added\n");
+
+            Console.WriteLine("\nTournament '" + tournamentName + "' created\n");
+
+            // Getting the id of the tournament created using querying by fetching the last inserted row
+            cmd.CommandText = $"SELECT TOP 1 id FROM Tournament ORDER BY id DESC";
+            SqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            int tournamentId =  reader.GetInt32(0);
+            reader.Close();
+            
+
+            
+            // Adding sports to the tournament
+            
+            while (true)
+            {
+                Console.WriteLine("\nSelect an option:\n 1) Add sport to the tournament \n 2) Done");
+                int option = Convert.ToInt32(Console.ReadLine());
+
+                if (option == 2)
+                {
+                    // Query to get all the sports present in the tournament.
+                    cmd.CommandText = $"SELECT name FROM Sports where ( id in ( select sportId from TournamentSportCombination where(tournamentId = '{tournamentId}') )  )";
+                    reader = cmd.ExecuteReader();
+
+
+                    // Print the sports present in the tournament after all the sports are done adding.
+                    Console.WriteLine($"\nThe sports in the tournament {tournamentName} are:");
+                    Console.WriteLine("-----------------------------------------------------------");
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"# {reader.GetString(0)}");
+                    }
+                    Console.WriteLine("-----------------------------------------------------------\n");
+                    
+                    reader.Close();
+
+                    break;
+                }
+                else if(option == 1)
+                {
+                    DisplaySports(cmd);
+
+                    // Get sport id as input.
+                    Console.WriteLine("\nSelect the sport id:");
+                    int sportId = Convert.ToInt32(Console.ReadLine());
+
+                    // Add sport to the tournament
+                    cmd.CommandText = $"insert into TournamentSportCombination(tournamentId, sportId) values('{tournamentId}','{sportId}')";
+                    cmd.ExecuteNonQuery();
+
+                    Console.WriteLine("Sport added");
+                }
+
+            }
         }
 
         public static void RemoveTournament(int tournamentId, SqlCommand cmd)
@@ -64,14 +142,12 @@ namespace Microsoft.Data.SqlClient
         static void Main(string[] args)
         {
 
-            string CONN_STRING = "Data Source=5CG9400GXC;Initial Catalog=CollegeSportManagementSystem;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
             //SqlConnection 
             SqlConnection conn = new SqlConnection(CONN_STRING);
-
             conn.Open();
-
-
             SqlCommand cmd = conn.CreateCommand();
+
+
             //AddSports("Cricket",cmd);
             //AddTournament("TournamentB", cmd);
             //RemoveTournament("Tournament1", cmd);
@@ -82,10 +158,15 @@ namespace Microsoft.Data.SqlClient
             while (true)
             {
                 Console.WriteLine("==========================================================================================================");
+
+                Console.WriteLine("==========================================================================================================");
+
+
                 Console.WriteLine("Select the required command:");
                 Console.WriteLine(" 1) Add sport \n 2) Add Tournament \n 3) Remove Tournament \n 4) Remove Sport");
                 Console.WriteLine(" 5) Remove Player \n 6) Add Score board \n 7) Edit Score board");
                 Console.WriteLine(" 8) Exit");
+                Console.WriteLine("----------------------------------------------------------------------------------------------------------");
                 int option = Convert.ToInt32( Console.ReadLine());
                 Console.WriteLine();
 
