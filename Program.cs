@@ -22,7 +22,26 @@ namespace Microsoft.Data.SqlClient
 
             }
             reader.Close();
+            Console.WriteLine("====================\n");
+        }
+
+        public static void DisplayPlayers(SqlCommand cmd)
+        {
+            cmd.CommandText = "select * from Player";
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            Console.WriteLine("\nPLAYERS");
             Console.WriteLine("====================");
+            Console.WriteLine("id  name");
+            Console.WriteLine("====================");
+
+            while (reader.Read())
+            {
+                Console.WriteLine($"{reader.GetInt32(0)} {reader.GetString(1)}");
+
+            }
+            reader.Close();
+            Console.WriteLine("====================\n");
         }
 
         public static void AddSports(string sportName, SqlCommand cmd)
@@ -36,7 +55,7 @@ namespace Microsoft.Data.SqlClient
 
         public static void RemoveSports(int id, SqlCommand cmd)
         {
-
+            
             cmd.CommandText = $"delete from Sports where (id='{id}')";
             cmd.ExecuteNonQuery();
             Console.WriteLine("\n" + "Sport" + " removed\n");
@@ -192,11 +211,17 @@ namespace Microsoft.Data.SqlClient
                 }
                 else if(option == 4)
                 {
-                    Console.WriteLine("Enter the sport id:");
+                    DisplaySports(cmd);
+
+                    Console.WriteLine("\nEnter the sport id:");
                     int sportId = Convert.ToInt32(Console.ReadLine());
                     RemoveSports(sportId, cmd);
+
+                    DisplaySports(cmd);
                 }else if (option == 5)
                 {
+                    DisplayPlayers(cmd);
+
                     Console.WriteLine("Enter the player id:");
                     int playerId = Convert.ToInt32(Console.ReadLine());
                     RemovePlayer(playerId, cmd);
